@@ -1,0 +1,15 @@
+services:
+  claude-code:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: claude-code
+    volumes:
+      - .:/workspace:rw
+    working_dir: /workspace
+    command: ["bash"]
+    stdin_open: true
+    tty: true
+    environment:
+      - TERM=xterm-256color
+    init: true
