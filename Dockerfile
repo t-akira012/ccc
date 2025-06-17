@@ -47,6 +47,10 @@ USER developer
 # Claude Code設定ディレクトリを作成
 RUN mkdir -p /home/developer/.claude
 
+# bashエイリアスを追加
+RUN echo "alias cca='claude auth'" >> /home/developer/.bashrc
+RUN echo "alias ccd='claude --dangerously-skip-permissions'" >> /home/developer/.bashrc
+
 # Claude Codeの動作確認
 RUN claude --version || echo "Claude Code installed, auth required"
 
