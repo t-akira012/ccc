@@ -4,6 +4,12 @@
 
 * Claude Code を `--dangerously-skip-permissions` モードで動かすための、コンテナボイラープレート
 
+## すぐ使うには
+
+```
+curl -L raw.githubusercontent.com/t-akira012/claude-code-compose/main/dl.sh | bash
+```
+
 ## ファイル
 
 ```
