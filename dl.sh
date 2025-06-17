@@ -5,5 +5,4 @@ cd $(dirname $0)
 curl -L "https://github.com/t-akira012/claude-code-compose/archive/main.tar.gz" --output main.tar.gz
 tar -xf main.tar.gz
 mv ./claude-code-compose-main/ ./.claude-compose/
-rmdir ./claude-code-compose-main
 rm -f main.tar.gz
