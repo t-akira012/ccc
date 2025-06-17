@@ -2,7 +2,7 @@
 
 ## これは何か
 
-* Claude Code を `--dangerously-skip-permissions` モードで動かすための、コンテナボイラープレート
+* Claude Code を `--dangerously-skip-permissions` モードで動かすための、コンテナ
 
 ## すぐ使うには
 

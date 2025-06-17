@@ -5,7 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: claude-code
     volumes:
-      - .:/workspace:rw
+      - .:/workspace/.claude-compose:rw
+      - ..:/workspace:rw
     working_dir: /workspace
     command: ["bash"]
     stdin_open: true
