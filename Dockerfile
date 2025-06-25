@@ -48,6 +48,7 @@ USER developer
 RUN mkdir -p /home/developer/.claude
 
 # bashエイリアスを追加
+RUN echo "alias ccc='claude'" >> /home/developer/.bashrc
 RUN echo "alias cca='claude auth'" >> /home/developer/.bashrc
 RUN echo "alias ccd='claude --dangerously-skip-permissions'" >> /home/developer/.bashrc
 
