@@ -6,9 +6,13 @@
 
 ## すぐ使うには
 
+1. 以下を行う
 ```
 curl -L raw.githubusercontent.com/t-akira012/claude-code-compose/main/dl.sh | bash
 ```
+2. `./.ccc` 以下にファイルが展開される
+3. `cd .ccc && make` でコンテナの中に入る
+4. `ccd` で、`claude --dangerously-skip-permissions` で起動する
 
 ## ファイル
 
@@ -17,6 +21,7 @@ $ tree
 .
 ├── CLAUDE.md
 ├── compose.yaml
+├── mcp.sh            # claude mcp addを列挙したシェル。コンテナに入った時に、.bashrcでロードされる
 ├── danger.sh
 ├── Dockerfile
 ├── Makefile
