@@ -19,7 +19,9 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     # タイムゾーン設定用
     tzdata \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    # uvx
+    && curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # JST（日本標準時）を設定
 ENV TZ=Asia/Tokyo
