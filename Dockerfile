@@ -50,9 +50,12 @@ USER developer
 RUN mkdir -p /home/developer/.claude
 
 # bashエイリアスを追加
-RUN echo "alias ccc='claude'" >> /home/developer/.bashrc
-RUN echo "alias cca='claude auth'" >> /home/developer/.bashrc
-RUN echo "alias ccd='claude --dangerously-skip-permissions'" >> /home/developer/.bashrc
+RUN <<-EOF
+echo "alias ccc='claude'" >> /home/developer/.bashrc
+echo "alias cca='claude auth'" >> /home/developer/.bashrc
+echo "alias ccd='claude --dangerously-skip-permissions'" >> /home/developer/.bashrc
+echo "export CLAUDE_CONFIG_DIR=$HOME/.config/claude" >> /home/developer/.bashrc
+EOF
 
 # Claude Codeの動作確認
 RUN claude --version || echo "Claude Code installed, auth required"
