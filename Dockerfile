@@ -19,9 +19,7 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     # タイムゾーン設定用
     tzdata \
-    && rm -rf /var/lib/apt/lists/* \
-    # uvx
-    && curl -LsSf https://astral.sh/uv/install.sh | sh
+    && rm -rf /var/lib/apt/lists/*
 
 # JST（日本標準時）を設定
 ENV TZ=Asia/Tokyo
@@ -46,11 +44,14 @@ RUN chmod +x *.sh
 # 開発ユーザーに切り替え
 USER developer
 
-# Claude Code設定ディレクトリを作成
-RUN mkdir -p /home/developer/.claude
-
-# bashエイリアスを追加
 RUN <<-EOF
+# Claude Code設定ディレクトリを作成
+mkdir -p /home/developer/.claude
+
+# install uvx
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# bash alias
 echo "alias ccc='claude'" >> /home/developer/.bashrc
 echo "alias cca='claude auth'" >> /home/developer/.bashrc
 echo "alias ccd='claude --dangerously-skip-permissions'" >> /home/developer/.bashrc
