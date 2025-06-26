@@ -52,12 +52,14 @@ mkdir -p /home/developer/.claude
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # bash alias
-echo "alias ccc='claude'" >> /home/developer/.bashrc
-echo "alias cca='claude auth'" >> /home/developer/.bashrc
-echo "alias ccd='claude --dangerously-skip-permissions'" >> /home/developer/.bashrc
-echo "export CLAUDE_CONFIG_DIR=$HOME/.config/claude" >> /home/developer/.bashrc
-echo "source /home/developer/.local/bin/env" >> /home/developer/.bashrc
-echo "source /workspace/.ccc/mcp.sh" >> /home/developer/.bashrc
+cat <<CAT_EOF > /home/developer/.bashrc
+alias ccc='claude'
+alias cca='claude auth'
+alias ccd='claude --dangerously-skip-permissions'
+export CLAUDE_CONFIG_DIR=/home/developer/.config/claude
+source /home/developer/.local/bin/env
+source /workspace/.ccc/mcp.sh
+CAT_EOF
 EOF
 
 # Claude Codeの動作確認
