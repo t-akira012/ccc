@@ -56,6 +56,7 @@ echo "alias cca='claude auth'" >> /home/developer/.bashrc
 echo "alias ccd='claude --dangerously-skip-permissions'" >> /home/developer/.bashrc
 echo "export CLAUDE_CONFIG_DIR=$HOME/.config/claude" >> /home/developer/.bashrc
 echo "source $HOME/.local/bin/env" >> /home/developer/.bashrc
+echo "source /workspace/.ccc/mcp.sh" >> /home/developer/.bashrc
 EOF
 
 # Claude Codeの動作確認
