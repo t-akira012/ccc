@@ -6,7 +6,7 @@ services:
     container_name: claude-code
     volumes:
       - ~/.claude:/home/developer/.claude/
-      - .:/workspace/.claude-compose:rw
+      - .:/workspace/.ccc
       - ..:/workspace:rw
     working_dir: /workspace
     command: ["bash"]
