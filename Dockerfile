@@ -73,7 +73,7 @@ EOF
 RUN chmod 644 /etc/msmtprc
 
 # メール宛先リスト（環境変数MAIL_RECIPIENTSで上書き可能）
-COPY ./.env.mail-recipients /etc/mail-recipients
+COPY ./.env.mail /etc/mail-recipients
 
 # 作業ディレクトリ設定
 WORKDIR /workspace
