@@ -12,4 +12,4 @@ rm -f main.tar.gz
 
 cd .ccc
 mv .env.mail.temp .env.mail
-perl -i -pe "s/CONTAINER_ORIGIN_NAME/\Q$name\E/g" .ccc/compose.yml
+perl -i -pe "s/CONTAINER_ORIGIN_NAME/$(basename $(pwd))/g" compose.yaml
