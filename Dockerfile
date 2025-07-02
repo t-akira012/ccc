@@ -1,25 +1,44 @@
-FROM node:lts
+FROM --platform=linux/amd64 public.ecr.aws/docker/library/archlinux:latest
 
-# 追加パッケージをインストール
-RUN apt-get update && apt-get install -y \
+# pacmanを初期化とアップデート
+RUN pacman-key --init \
+    && pacman-key --populate \
+    && pacman -Sy --noconfirm archlinux-keyring \
+    && pacman -Syu --noconfirm
+
+# 必要なパッケージをインストール
+RUN pacman -S --noconfirm \
     # 基本ツール
+    base-devel \
     curl \
     wget \
     git \
     make \
     unzip \
     # エディタとユーティリティ
-    nano \
     vim \
     ripgrep \
     # Python環境
-    python3 \
-    python3-pip \
+    python \
+    python-pip \
+    python-uv \
+    # Node.js環境
+    nodejs \
+    npm \
+    pnpm \
+    # Go環境
+    go \
+    # メール送信（軽量設定）
+    msmtp \
+    msmtp-mta \
+    s-nail \
     # ブラウザ認証用
     xdg-utils \
     # タイムゾーン設定用
     tzdata \
-    && rm -rf /var/lib/apt/lists/*
+    # sudo
+    sudo \
+    && pacman -Scc --noconfirm
 
 # JST（日本標準時）を設定
 ENV TZ=Asia/Tokyo
@@ -31,6 +50,30 @@ RUN npm install -g @anthropic-ai/claude-code
 # 非rootユーザーを作成（セキュリティ強化）
 RUN useradd -m -s /bin/bash developer \
     && echo "developer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# msmtp設定（自前SMTPサーバ用）
+RUN cat <<EOF > /etc/msmtprc
+# 自前SMTP設定
+defaults
+auth           off
+tls            off
+port           25
+domain         localhost
+
+# 自前SMTPサーバアカウント
+account        local
+host           smtp.local
+from           notifications@container
+
+# デフォルトアカウント
+account default : local
+EOF
+
+# 設定ファイルのパーミッション設定
+RUN chmod 644 /etc/msmtprc
+
+# メール宛先リスト（環境変数MAIL_RECIPIENTSで上書き可能）
+COPY ./.env.mail-recipients /etc/mail-recipients
 
 # 作業ディレクトリ設定
 WORKDIR /workspace
@@ -44,23 +87,41 @@ RUN chmod +x *.sh
 # 開発ユーザーに切り替え
 USER developer
 
-RUN <<-EOF
 # Claude Code設定ディレクトリを作成
-mkdir -p /home/developer/.claude
+RUN mkdir -p /home/developer/.claude
 
-# install uvx
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# bash alias
-cat <<CAT_EOF > /home/developer/.bashrc
+# bashエイリアスとMCP設定を追加
+RUN cat <<EOF > /home/developer/.bashrc
 alias ccc='claude'
 alias cca='claude auth'
 alias ccd='claude --dangerously-skip-permissions'
 export CLAUDE_CONFIG_DIR=/home/developer/.config/claude
-source /home/developer/.local/bin/env
 source /workspace/.ccc/mcp.sh
-CAT_EOF
+
+# Go環境変数
+export GOPATH=/home/developer/go
+export PATH=\$PATH:\$GOPATH/bin
+
+# pnpmグローバルディレクトリ
+export PNPM_HOME=/home/developer/.local/share/pnpm
+export PATH=\$PATH:\$PNPM_HOME
+
+# メール通知関数
+notify() {
+    local subject="\${1:-Container Alert}"
+    local message="\${2:-Notification from container}"
+    local recipients="\${MAIL_RECIPIENTS:-\$(cat /etc/mail-recipients 2>/dev/null || echo 'admin@example.com')}"
+    
+    echo "\$message"  < /dev/null |  mail -s "\$subject" \$recipients
+}
+
+# メール送信エイリアス
+alias alert='notify'
 EOF
+
+# 環境変数設定
+ENV MAIL_RECIPIENTS=""
+ENV SMTP_HOST="smtp.local"
 
 # Claude Codeの動作確認
 RUN claude --version || echo "Claude Code installed, auth required"

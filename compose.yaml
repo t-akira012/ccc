@@ -13,5 +13,23 @@ services:
     stdin_open: true
     tty: true
     environment:
+      - SMTP_HOST=smtp
       - TERM=xterm-256color
     init: true
+    networks:
+      - internal
+    depends_on:
+      - smtp
+
+  smtp:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"  # SMTP
+      # - "8025:8025"  # Web UI
+    networks:
+      - internal
+    hostname: smtp.local
+
+networks:
+  internal:
+    driver: bridge
