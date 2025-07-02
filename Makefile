@@ -23,3 +23,5 @@ restart:
 dev:
 	docker compose exec claude-code bash
 
+deploy:
+	export CURRENT_DIR=$$(pwd) && echo $$CURRENT_DIR && echo create-reverce-symlink && mv $$CURRENT_DIR $$HOME/ccc/.ccc && ln -si $$HOME/ccc/.ccc $${CURRENT_DIR}
