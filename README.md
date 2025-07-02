@@ -8,7 +8,7 @@
 
 1. 以下を行う
 ```
-curl -L raw.githubusercontent.com/t-akira012/claude-code-compose/main/dl.sh | bash
+curl -L raw.githubusercontent.com/t-akira012/ccc/main/dl.sh | bash
 ```
 2. `./.ccc` 以下にファイルが展開される
 3. `cd .ccc && make` でコンテナの中に入る
