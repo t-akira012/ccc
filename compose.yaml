@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: claude-code
+    container_name: claude-code-CONTAINER_ORIGIN_NAME
     volumes:
       - ~/.claude:/home/developer/.claude/
       - .:/workspace/.ccc

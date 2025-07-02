@@ -8,3 +8,7 @@ curl -L "https://github.com/t-akira012/${REPO_NAME}/archive/main.tar.gz" --outpu
 tar -xf main.tar.gz
 mv ${REPO_NAME}-main .ccc
 rm -f main.tar.gz
+
+cd .ccc
+mv .env.mail.temp .env.mail
+sed -i "s/CONTAINER_ORIGIN_NAME/$(dirname "$pwd")/g" compose.yml
