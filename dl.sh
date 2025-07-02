@@ -11,4 +11,4 @@ rm -f main.tar.gz
 
 cd .ccc
 mv .env.mail.temp .env.mail
-sed -i "s/CONTAINER_ORIGIN_NAME/$(dirname "$pwd")/g" compose.yml
+sed -i "s/CONTAINER_ORIGIN_NAME/$(dirname $(pwd))/g" compose.yml
