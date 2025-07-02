@@ -1,4 +1,4 @@
-# `claude --dangerously-skip-permissions` in Container
+# CCC: `claude --dangerously-skip-permissions` in Container
 
 ## これは何か
 
