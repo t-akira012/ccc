@@ -22,24 +22,24 @@ RUN <<EOF
     echo $TZ > /etc/timezone
 
     # 非rootユーザーを作成（セキュリティ強化）
-    useradd -m -s /bin/bash developer
-    echo "developer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    useradd -m -s /bin/bash ubuntu
+    echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 EOF
 
 # Homebrewをインストール
 RUN <<EOF
-su - developer -c '
+su - ubuntu -c '
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> /home/developer/.bashrc
+    echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> /home/ubuntu/.bashrc
     # Homebrewで開発ツールをインストール
-    source /home/developer/.bashrc
+    source /home/ubuntu/.bashrc
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     brew install wget make unzip vim ripgrep python@3.11 node go mailutils
     # pnpmをインストール
     npm install -g pnpm
     # pnpmセットアップ（環境変数を設定してから実行）
     mkdir -p $PNPM_HOME
-    export PNPM_HOME=/home/developer/.local/share/pnpm
+    export PNPM_HOME=/home/ubuntu/.local/share/pnpm
     export PATH="$PNPM_HOME:$PATH"
     pnpm setup
     pnpm install -g @anthropic-ai/claude-code @google/gemini-cli
@@ -49,20 +49,20 @@ EOF
 # 作業ディレクトリ設定
 WORKDIR /workspace
 # プロジェクトファイルをコピー
-COPY --chown=developer:developer . .
+COPY --chown=ubuntu:ubuntu . .
 # スクリプトに実行権限付与
 RUN chmod +x *.sh
 # 開発ユーザーに切り替え
-USER developer
+USER ubuntu
 
 # bashエイリアスとMCP設定を追加
 RUN <<EOF
 # Claude Code設定ディレクトリを作成
-    mkdir -p /home/developer/.claude
-    mkdir -p /home/developer/.config/claude
-    mkdir -p /home/developer/.config/gemini
+    mkdir -p /home/ubuntu/.claude
+    mkdir -p /home/ubuntu/.config/claude
+    mkdir -p /home/ubuntu/.config/gemini
 
-cat >> /home/developer/.bashrc << 'BASHRC_EOF'
+cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
 source /workspace/.ccc/.env
 source /workspace/.ccc/alias.sh
 if [[ $- != *i* ]]; then

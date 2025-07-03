@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: claude-code-CONTAINER_ORIGIN_NAME
     volumes:
-      - ~/.claude:/home/developer/.claude/
+      - ~/.claude:/home/ubuntu/.claude/
       - .:/workspace/.ccc
       - ..:/workspace:rw
     working_dir: /workspace
