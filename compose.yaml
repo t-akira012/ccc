@@ -4,7 +4,6 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        MAIL_HOSTNAME: ${MAIL_HOSTNAME}
         MAIL_DOMAIN: ${MAIL_DOMAIN}
     env_file:
       - .env

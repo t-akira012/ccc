@@ -2,7 +2,6 @@ FROM ubuntu:latest
 
 ARG RESEND_TOKEN
 ARG MAIL_TO
-ARG MAIL_HOSTNAME
 ARG MAIL_DOMAIN
 
 ENV TZ=Asia/Tokyo
@@ -61,9 +60,9 @@ RUN <<EOF
     mkdir -p /home/ubuntu/.claude
     mkdir -p /home/ubuntu/.config/claude
     mkdir -p /home/ubuntu/.config/gemini
-    alias mail_notify=/workspace/.ccc/mail_notify
 
 cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
+alias mail_notify=/workspace/.ccc/mail_notify
 source /workspace/.ccc/.env
 source /workspace/.ccc/alias.sh
 if [[ $- != *i* ]]; then
