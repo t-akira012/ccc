@@ -63,7 +63,7 @@ RUN <<EOF
     mkdir -p /home/developer/.config/gemini
 
 cat >> /home/developer/.bashrc << 'BASHRC_EOF'
-source /workspace/.ccc/.env.mail
+source /workspace/.ccc/.env
 source /workspace/.ccc/alias.sh
 if [[ $- != *i* ]]; then
     source /workspace/.ccc/mcp.sh
