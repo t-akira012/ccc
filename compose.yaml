@@ -1,5 +1,5 @@
 services:
-  claude-code:
+  claude-code-CONTAINER_ORIGIN_NAME:
     build:
       context: .
       dockerfile: Dockerfile
