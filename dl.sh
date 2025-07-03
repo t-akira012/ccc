@@ -12,4 +12,5 @@ rm -f main.tar.gz
 
 cd .ccc
 mv .env.temp .env
-perl -i -pe "s/CONTAINER_ORIGIN_NAME/$(basename $(pwd))/g" compose.yaml
+REPLACE_NAME=$(echo $(basename $(pwd)) | perl -i -pe "s/.\\//g" )
+perl -i -pe "s/CONTAINER_ORIGIN_NAME/${REPLACE_NAME}/g" compose.yaml
