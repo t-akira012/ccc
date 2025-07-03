@@ -10,7 +10,10 @@ apt-get update && apt-get install -y \
     sudo \
     ca-certificates \
     procps \
-    tzdata && \
+    tzdata \
+    postfix \
+    libsasl2-modules \
+    mailutils && \
 apt-get clean && \
 rm -rf /var/lib/apt/lists/*
 EOF
@@ -24,6 +27,13 @@ RUN <<EOF
     # 非rootユーザーを作成（セキュリティ強化）
     useradd -m -s /bin/bash ubuntu
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+    # Postfix設定（環境変数使用）
+    echo "myhostname = ${MAIL_HOSTNAME}" > /etc/postfix/main.cf
+    echo "mydestination = \$myhostname, localhost.\$mydomain, localhost" >> /etc/postfix/main.cf
+    echo "smtp_sasl_auth_enable = no" >> /etc/postfix/main.cf
+    echo "smtp_helo_name = ${MAIL_HOSTNAME}" >> /etc/postfix/main.cf
+    echo "myorigin = ${MAIL_DOMAIN}" >> /etc/postfix/main.cf
 EOF
 
 # Homebrewをインストール
@@ -34,7 +44,7 @@ su - ubuntu -c '
     # Homebrewで開発ツールをインストール
     source /home/ubuntu/.bashrc
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    brew install wget make unzip vim ripgrep python@3.11 node go mailutils
+    brew install wget make unzip vim ripgrep python@3.11 node go
     # pnpmをインストール
     npm install -g pnpm
     # pnpmセットアップ（環境変数を設定してから実行）
