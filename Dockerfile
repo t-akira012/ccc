@@ -33,26 +33,13 @@ RUN <<EOF
     # 非rootユーザーを作成（セキュリティ強化）
     useradd -m -s /bin/bash ubuntu
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+    # install homebrew
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> /home/ubuntu/.bashrc
 EOF
 # 開発ユーザーに切り替え
 USER ubuntu
-# Homebrewをインストール
-RUN <<EOF
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> /home/ubuntu/.bashrc
-    # Homebrewで開発ツールをインストール
-    source /home/ubuntu/.bashrc
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    brew install wget make unzip vim ripgrep python@3.11 node go
-    # pnpmをインストール
-    npm install -g pnpm
-    # pnpmセットアップ（環境変数を設定してから実行）
-    mkdir -p $PNPM_HOME
-    export PNPM_HOME=/home/ubuntu/.local/share/pnpm
-    export PATH="$PNPM_HOME:$PATH"
-    pnpm setup
-    pnpm install -g @anthropic-ai/claude-code @google/gemini-cli
-EOF
 
 # bashエイリアスとMCP設定を追加
 RUN <<EOF
@@ -70,6 +57,22 @@ if [[ $- != *i* ]]; then
     source /workspace/.ccc/notify.sh
 fi
 BASHRC_EOF
+
+EOF
+# Homebrewをインストール
+RUN <<EOF
+    # Homebrewで開発ツールをインストール
+    source /home/ubuntu/.bashrc
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    brew install wget make unzip vim ripgrep python@3.11 node go
+    # pnpmをインストール
+    npm install -g pnpm
+    # pnpmセットアップ（環境変数を設定してから実行）
+    mkdir -p $PNPM_HOME
+    export PNPM_HOME=/home/ubuntu/.local/share/pnpm
+    export PATH="$PNPM_HOME:$PATH"
+    pnpm setup
+    pnpm install -g @anthropic-ai/claude-code @google/gemini-cli
 EOF
 
 # Claude CodeとGemini CLIの動作確認
