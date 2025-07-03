@@ -13,4 +13,4 @@ rm -f main.tar.gz
 cd .ccc
 mv .env.temp .env
 REPLACE_NAME=$(head /dev/urandom | md5sum | cut -c1-8)
-perl -i -pe "s/CONTAINER_ORIGIN_NAME/${REPLACE_NAME}/g" compose.yaml
+perl -i -pe "s/container_origin_name/${REPLACE_NAME}/g" compose.yaml

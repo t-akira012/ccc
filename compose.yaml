@@ -1,9 +1,9 @@
 services:
-  claude-code-CONTAINER_ORIGIN_NAME:
+  claude-code-container_origin_name:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: claude-code-CONTAINER_ORIGIN_NAME
+    container_name: claude-code-container_origin_name
     volumes:
       - ~/.claude:/home/ubuntu/.claude/
       - .:/workspace/.ccc
