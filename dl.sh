@@ -11,5 +11,5 @@ mv ${REPO_NAME}-main .ccc
 rm -f main.tar.gz
 
 cd .ccc
-mv .env.mail.temp .env.mail
+mv .env.temp .env
 perl -i -pe "s/CONTAINER_ORIGIN_NAME/$(basename $(pwd))/g" compose.yaml
