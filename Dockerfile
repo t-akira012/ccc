@@ -1,25 +1,32 @@
 FROM ubuntu:latest
 
-# 最小限のシステムパッケージのみインストール
-RUN <<EOF
-export DEBIAN_FRONTEND=noninteractive
-apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    git \
-    sudo \
-    ca-certificates \
-    procps \
-    tzdata \
-    postfix \
-    libsasl2-modules \
-    mailutils && \
-apt-get clean && \
-rm -rf /var/lib/apt/lists/*
-EOF
+ARG RESEND_TOKEN
+ARG MAIL_TO
+ARG MAIL_HOSTNAME
+ARG MAIL_DOMAIN
 
 ENV TZ=Asia/Tokyo
+ENV RESEND_TOKEN=${RESEND_TOKEN}
+ENV MAIL_TO=${MAIL_TO}
+ENV MAIL_DOMAIN=${MAIL_DOMAIN}
+ENV MAIL_FROM=notify@${MAIL_DOMAIN}
+ENV MAIL_HOSTNAME=mail.${MAIL_DOMAIN}
+
+# 作業ディレクトリ設定
+WORKDIR /workspace
+# プロジェクトファイルをコピー
+COPY --chown=ubuntu:ubuntu . .
+# スクリプトに実行権限付与
+RUN chmod +x *.sh
+
+# 最小限のシステムパッケージのみインストール
 RUN <<EOF
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update
+    apt-get install -y build-essential curl git sudo ca-certificates procps tzdata libsasl2-modules
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+
     # JST（日本標準時）を設定
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
     echo $TZ > /etc/timezone
@@ -27,18 +34,11 @@ RUN <<EOF
     # 非rootユーザーを作成（セキュリティ強化）
     useradd -m -s /bin/bash ubuntu
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-    # Postfix設定（環境変数使用）
-    echo "myhostname = ${MAIL_HOSTNAME}" > /etc/postfix/main.cf
-    echo "mydestination = \$myhostname, localhost.\$mydomain, localhost" >> /etc/postfix/main.cf
-    echo "smtp_sasl_auth_enable = no" >> /etc/postfix/main.cf
-    echo "smtp_helo_name = ${MAIL_HOSTNAME}" >> /etc/postfix/main.cf
-    echo "myorigin = ${MAIL_DOMAIN}" >> /etc/postfix/main.cf
 EOF
-
+# 開発ユーザーに切り替え
+USER ubuntu
 # Homebrewをインストール
 RUN <<EOF
-su - ubuntu -c '
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> /home/ubuntu/.bashrc
     # Homebrewで開発ツールをインストール
@@ -53,17 +53,7 @@ su - ubuntu -c '
     export PATH="$PNPM_HOME:$PATH"
     pnpm setup
     pnpm install -g @anthropic-ai/claude-code @google/gemini-cli
-'
 EOF
-
-# 作業ディレクトリ設定
-WORKDIR /workspace
-# プロジェクトファイルをコピー
-COPY --chown=ubuntu:ubuntu . .
-# スクリプトに実行権限付与
-RUN chmod +x *.sh
-# 開発ユーザーに切り替え
-USER ubuntu
 
 # bashエイリアスとMCP設定を追加
 RUN <<EOF
@@ -71,6 +61,7 @@ RUN <<EOF
     mkdir -p /home/ubuntu/.claude
     mkdir -p /home/ubuntu/.config/claude
     mkdir -p /home/ubuntu/.config/gemini
+    alias mail_notify=/workspace/.ccc/mail_notify
 
 cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
 source /workspace/.ccc/.env
