@@ -51,6 +51,7 @@ source /workspace/.ccc/.env
 source /workspace/.ccc/alias.sh
 if [[ $- != *i* ]]; then
     source /workspace/.ccc/mcp.sh
+    touch /workspace/temp_file.sh
 fi
 BASHRC_EOF
 EOF
