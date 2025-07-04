@@ -13,7 +13,10 @@ ENV MAIL_HOSTNAME=mail.${MAIL_DOMAIN}
 
 # 作業ディレクトリ設定
 WORKDIR /workspace
+# 通知スクリプトをコピー
+COPY ./dual_save /usr/bin/dual_save
 COPY ./mail_notify /usr/bin/mail_notify
+COPY ./archive_save /usr/bin/archive_save
 # プロジェクトファイルをコピー
 COPY --chown=ubuntu:ubuntu . .
 # スクリプトに実行権限付与

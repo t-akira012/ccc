@@ -1,0 +1,12 @@
+#!/bin/bash
+# /usr/bin/dual_save MAILTITLE FILE_TITLE CONTENT_FILE
+
+MAILTITLE="$1"
+FILE_TITLE="$1"
+CONTENT_FILE="$2"
+
+# メール通知
+/usr/bin/mail_notify "$MAIL_TITLE" --file "$CONTENT_FILE"
+
+# ファイル保存
+/usr/bin/archive_save "$FILE_TITLE" "$CONTENT_FILE"
