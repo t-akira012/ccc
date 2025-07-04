@@ -23,7 +23,7 @@ def send_email(title, message):
     
     # curlコマンドを実行
     result = subprocess.run([
-        'curl', '-X', 'POST', 'https://api.resend.com/emails',
+        'curl', '-s', '-X', 'POST', 'https://api.resend.com/emails',
         '-H', f'Authorization: Bearer {os.environ["RESEND_TOKEN"]}',
         '-H', 'Content-Type: application/json',
         '-d', json_data
