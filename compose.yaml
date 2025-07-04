@@ -9,7 +9,7 @@ services:
       - .env
     container_name: claude-code-container_origin_name
     volumes:
-      - ~/docs/doc/_gen:/workspace/_gen        # 生成ファイル保存用ディレクトリ
+      - ~/docs/doc/generated_files:/workspace/gen        # 生成ファイル保存用ディレクトリ
       - ~/.claude:/home/ubuntu/.config/claude/ # グローバル CLAUDE.md
       - .:/workspace/.ccc                      # コンテナの配置場所
       - ..:/workspace:rw

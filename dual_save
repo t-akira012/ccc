@@ -1,9 +1,9 @@
 #!/bin/bash
 # /usr/bin/dual_save MAILTITLE FILE_TITLE CONTENT_FILE
 
-MAILTITLE="$1"
-FILE_TITLE="$1"
-CONTENT_FILE="$2"
+MAIL_TITLE="$1"
+FILE_TITLE="$2"
+CONTENT_FILE="$3"
 
 # メール通知
 /usr/bin/mail_notify "$MAIL_TITLE" --file "$CONTENT_FILE"
