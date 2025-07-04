@@ -13,6 +13,7 @@ ENV MAIL_HOSTNAME=mail.${MAIL_DOMAIN}
 
 # 作業ディレクトリ設定
 WORKDIR /workspace
+COPY ./mail_notify /usr/bin/mail_notify
 # プロジェクトファイルをコピー
 COPY --chown=ubuntu:ubuntu . .
 # スクリプトに実行権限付与
@@ -33,11 +34,8 @@ RUN <<EOF
     # 非rootユーザーを作成（セキュリティ強化）
     useradd -m -s /bin/bash ubuntu
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-    # install homebrew
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo "eval \"\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> /home/ubuntu/.bashrc
 EOF
+
 # 開発ユーザーに切り替え
 USER ubuntu
 
@@ -49,20 +47,20 @@ RUN <<EOF
     mkdir -p /home/ubuntu/.config/gemini
 
 cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
-alias mail_notify=/workspace/.ccc/mail_notify
 source /workspace/.ccc/.env
 source /workspace/.ccc/alias.sh
 if [[ $- != *i* ]]; then
     source /workspace/.ccc/mcp.sh
-    source /workspace/.ccc/notify.sh
 fi
 BASHRC_EOF
-
 EOF
+
 # Homebrewをインストール
 RUN <<EOF
+    # install homebrew
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/ubuntu/.bashrc
     # Homebrewで開発ツールをインストール
-    source /home/ubuntu/.bashrc
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     brew install wget make unzip vim ripgrep python@3.11 node go
     # pnpmをインストール
@@ -71,6 +69,7 @@ RUN <<EOF
     mkdir -p $PNPM_HOME
     export PNPM_HOME=/home/ubuntu/.local/share/pnpm
     export PATH="$PNPM_HOME:$PATH"
+    source /home/ubuntu/.bashrc
     pnpm setup
     pnpm install -g @anthropic-ai/claude-code @google/gemini-cli
 EOF

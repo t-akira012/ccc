@@ -1,28 +1,55 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
+import sys
+import json
+import html
+import os
+import subprocess
 
-TITLE=$1
-shift
-MESSAGE="$*"
+def send_email(title, message):
+    # HTML用エスケープ（改行を<br>に変換）
+    html_escaped = html.escape(message).replace('\n', '<br>')
+    
+    # JSON構造を作成
+    email_data = {
+        "from": os.environ["MAIL_FROM"],
+        "to": [os.environ["MAIL_TO"]],
+        "subject": title,
+        "html": f"<div style='white-space: pre-wrap; font-family: monospace; font-size: 12px; line-height: 1.4; padding: 10px; background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; overflow-x: auto;'>{html_escaped}</div>",
+        "text": message
+    }
+    
+    # JSONを文字列に変換
+    json_data = json.dumps(email_data, ensure_ascii=False)
+    
+    # curlコマンドを実行
+    result = subprocess.run([
+        'curl', '-X', 'POST', 'https://api.resend.com/emails',
+        '-H', f'Authorization: Bearer {os.environ["RESEND_TOKEN"]}',
+        '-H', 'Content-Type: application/json',
+        '-d', json_data
+    ], capture_output=True, text=True)
+    
+    print(result.stdout)
+    if result.stderr:
+        print(result.stderr, file=sys.stderr)
 
-escape_html() {
-    printf '%s' "$1" | sed -e 's/&/\&amp;/g' \
-                           -e 's/</\&lt;/g' \
-                           -e 's/>/\&gt;/g' \
-                           -e 's/"/\&quot;/g' \
-                           -e "s/'/\&#39;/g"
-}
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: mail_notify <title> [message] or mail_notify <title> --file <filename>")
+        sys.exit(1)
+    
+    title = sys.argv[1]
+    
+    if len(sys.argv) > 2 and sys.argv[2] == "--file":
+        if len(sys.argv) < 4:
+            print("Error: --file option requires a filename")
+            sys.exit(1)
+        with open(sys.argv[3], 'r', encoding='utf-8') as f:
+            message = f.read()
+    else:
+        message = ' '.join(sys.argv[2:])
+    
+    send_email(title, message)
 
-ESCAPED_MESSAGE=$(escape_html "$MESSAGE")
-
-curl -X POST 'https://api.resend.com/emails' \
-    -H "Authorization: Bearer ${RESEND_TOKEN}" \
-    -H 'Content-Type: application/json' \
-    -d @- <<EOF
-{
-    "from": "${MAIL_FROM}",
-    "to": ["${MAIL_TO}"],
-    "subject": "${TITLE}",
-    "html": "<pre>${ESCAPED_MESSAGE}</pre>"
-}
-EOF
-
+if __name__ == "__main__":
+    main()
