@@ -11,9 +11,11 @@ FILENAME="${TIMESTAMP}_${TITLE}.md"
 
 # ファイルを保存
 {
-    echo "# $TITLE"
-    echo ""
+    echo "---"
     echo "作成日時: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "---"
+    echo ""
+    echo "# $TITLE"
     echo ""
     cat "$CONTENT_FILE"
 } > "$ARCHIVE_DIR/$FILENAME"
