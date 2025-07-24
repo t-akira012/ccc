@@ -9,10 +9,12 @@ services:
       - .env
     container_name: claude-code-container_origin_name
     volumes:
-      - ~/docs/doc/generated_files:/workspace/gen        # 生成ファイル保存用ディレクトリ
+      - ~/.config/gh:/root/.config/gh:ro  # gh-cliの設定を読み取り専用で共有
       - ~/.claude:/home/ubuntu/.config/claude/ # グローバル CLAUDE.md
+      - ~/docs/doc/generated_files:/workspace/gen        # 生成ファイル保存用ディレクトリ
       - .:/workspace/.ccc                      # コンテナの配置場所
       - ..:/workspace:rw
+      - ~/go/bin/cclog:/usr/bin/cclog
     working_dir: /workspace
     command: ["bash"]
     stdin_open: true

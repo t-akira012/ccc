@@ -20,7 +20,7 @@ COPY ./archive_save /usr/bin/archive_save
 # プロジェクトファイルをコピー
 COPY --chown=ubuntu:ubuntu . .
 # スクリプトに実行権限付与
-RUN chmod +x *.sh
+# RUN chmod +x *.sh
 
 # 最小限のシステムパッケージのみインストール
 RUN <<EOF
@@ -49,7 +49,7 @@ RUN <<EOF
     mkdir -p /home/ubuntu/.config/claude
     mkdir -p /home/ubuntu/.config/gemini
 
-cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
+    cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
 source /workspace/.ccc/.env
 source /workspace/.ccc/alias.sh
 if [[ $- != *i* ]]; then
@@ -66,16 +66,11 @@ RUN <<EOF
     echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/ubuntu/.bashrc
     # Homebrewで開発ツールをインストール
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    brew install wget make unzip vim ripgrep python@3.11 node go
-    # pnpmをインストール
-    npm install -g pnpm
-    # pnpmセットアップ（環境変数を設定してから実行）
-    mkdir -p $PNPM_HOME
-    export PNPM_HOME=/home/ubuntu/.local/share/pnpm
-    export PATH="$PNPM_HOME:$PATH"
-    source /home/ubuntu/.bashrc
-    pnpm setup
-    pnpm install -g @anthropic-ai/claude-code @google/gemini-cli
+    brew install wget make unzip vim ripgrep python node go gh
+
+    # npmなどを導入
+    . /home/ubuntu/.bashrc
+    npm install -g @anthropic-ai/claude-code @google/gemini-cli
 EOF
 
 # Claude CodeとGemini CLIの動作確認
