@@ -18,6 +18,13 @@ RUN <<EOF
     rm -rf /var/lib/apt/lists/*
 EOF
 
+# install uv
+RUN <<EOF
+    pipx ensurepath
+    source ~/.bashrc
+    pipx install uv
+EOF
+
 # install nodejs
 RUN <<EOF
     set -euo pipefail
@@ -40,9 +47,8 @@ RUN <<EOF
     set -euo pipefail
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
     echo $TZ > /etc/timezone
-    # 非rootユーザーを作成（セキュリティ強化）
-    # useradd -m -s /bin/bash ubuntu
-    # echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
 EOF
 
 
