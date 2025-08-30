@@ -1,34 +1,28 @@
 FROM ubuntu:latest
-
-ARG RESEND_TOKEN
-ARG MAIL_TO
-ARG MAIL_DOMAIN
-
 ENV TZ=Asia/Tokyo
-ENV RESEND_TOKEN=${RESEND_TOKEN}
-ENV MAIL_TO=${MAIL_TO}
-ENV MAIL_DOMAIN=${MAIL_DOMAIN}
-ENV MAIL_FROM=notify@${MAIL_DOMAIN}
-ENV MAIL_HOSTNAME=mail.${MAIL_DOMAIN}
-
 # 作業ディレクトリ設定
 WORKDIR /workspace
-# 通知スクリプトをコピー
-COPY ./dual_save /usr/bin/dual_save
-COPY ./mail_notify /usr/bin/mail_notify
-COPY ./archive_save /usr/bin/archive_save
 # プロジェクトファイルをコピー
 COPY --chown=ubuntu:ubuntu . .
 # スクリプトに実行権限付与
 # RUN chmod +x *.sh
 
-# 最小限のシステムパッケージのみインストール
 RUN <<EOF
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
-    apt-get install -y build-essential curl git sudo ca-certificates procps tzdata libsasl2-modules
+    apt-get install -y \
+        build-essential curl git sudo ca-certificates procps tzdata libsasl2-modules \
+        nodejs npm \
+        vim \
+        pipx python3-all python-is-python3
     apt-get clean
     rm -rf /var/lib/apt/lists/*
+
+    # ca update
+    update-ca-certificates
+
+    # Install AI Agents
+    npm install -g @anthropic-ai/claude-code @openai/codex @google/gemini-cli
 
     # JST（日本標準時）を設定
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
@@ -46,35 +40,22 @@ USER ubuntu
 RUN <<EOF
 # Claude Code設定ディレクトリを作成
     mkdir -p /home/ubuntu/.claude
+    mkdir -p /home/ubuntu/.codex
     mkdir -p /home/ubuntu/.config/claude
     mkdir -p /home/ubuntu/.config/gemini
 
     cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
-source /workspace/.ccc/.env
-source /workspace/.ccc/alias.sh
+source /workspace/.claude-code/.env
+source /workspace/.claude-code/alias.sh
 if [[ $- != *i* ]]; then
-    source /workspace/.ccc/mcp.sh
-    touch /tmp/out.txt
+    source /workspace/.claude-code/mcp.sh
 fi
 BASHRC_EOF
 EOF
 
-# Homebrewをインストール
-RUN <<EOF
-    # install homebrew
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/ubuntu/.bashrc
-    # Homebrewで開発ツールをインストール
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    brew install wget make unzip vim ripgrep python node go gh
-
-    # npmなどを導入
-    . /home/ubuntu/.bashrc
-    npm install -g @anthropic-ai/claude-code @google/gemini-cli
-EOF
-
 # Claude CodeとGemini CLIの動作確認
 RUN claude --version || echo "Claude Code installed, auth required"
+RUN codex --version || echo "Codex CLI installed, auth required"
 RUN gemini --version || echo "Gemini CLI installed, auth required"
 
 # デフォルトコマンド（対話型bash）
