@@ -64,6 +64,7 @@ RUN <<EOF
     mkdir -p /home/ubuntu/.config/claude
     mkdir -p /home/ubuntu/.config/gemini
 
+    # aliasやexportを追加したい場合は、alias.shに追記する
     cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
 source /workspace/.claude-code/.env
 source /workspace/.claude-code/alias.sh
