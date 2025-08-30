@@ -1,37 +1,51 @@
-FROM ubuntu:latest
+FROM ubuntu:devel
+
 ENV TZ=Asia/Tokyo
 # 作業ディレクトリ設定
 WORKDIR /workspace
 # プロジェクトファイルをコピー
 COPY --chown=ubuntu:ubuntu . .
-# スクリプトに実行権限付与
-# RUN chmod +x *.sh
 
+# base package & python
 RUN <<EOF
+    set -euo pipefail
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
-    apt-get install -y \
-        build-essential curl git sudo ca-certificates procps tzdata libsasl2-modules \
-        nodejs npm \
-        vim \
+    apt-get install -y --no-install-recommends \
+        build-essential curl git sudo ca-certificates procps tzdata libsasl2-modules vim software-properties-common \
         pipx python3-all python-is-python3
     apt-get clean
     rm -rf /var/lib/apt/lists/*
+EOF
 
-    # ca update
-    update-ca-certificates
+# install nodejs
+RUN <<EOF
+    set -euo pipefail
+    export DEBIAN_FRONTEND=noninteractive
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+    apt-get install -y --no-install-recommends nodejs
+    corepack enable
+    apt-get clean
+    rm -rf /var/lib/apt/lists/*
+EOF
 
-    # Install AI Agents
-    npm install -g @anthropic-ai/claude-code @openai/codex @google/gemini-cli
+# install ai agent
+RUN <<EOF
+    set -euo pipefail
+    # https://zenn.dev/discus0434/scraps/e0b1a0aa5406eb
+    npm install -g @anthropic-ai/claude-code@1.0.24 @openai/codex@native @google/gemini-cli
+EOF
 
-    # JST（日本標準時）を設定
+RUN <<EOF
+    set -euo pipefail
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
     echo $TZ > /etc/timezone
-
     # 非rootユーザーを作成（セキュリティ強化）
-    useradd -m -s /bin/bash ubuntu
-    echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    # useradd -m -s /bin/bash ubuntu
+    # echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 EOF
+
+
 
 # 開発ユーザーに切り替え
 USER ubuntu
