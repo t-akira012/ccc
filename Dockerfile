@@ -14,14 +14,13 @@ RUN <<EOF
     apt-get install -y --no-install-recommends \
         build-essential curl git sudo ca-certificates procps tzdata libsasl2-modules vim software-properties-common \
         pipx python3-all python-is-python3
+    pipx ensurepath
     apt-get clean
     rm -rf /var/lib/apt/lists/*
 EOF
 
 # install uv
 RUN <<EOF
-    pipx ensurepath
-    source ~/.bashrc
     pipx install uv
 EOF
 
@@ -40,7 +39,7 @@ EOF
 RUN <<EOF
     set -euo pipefail
     # https://zenn.dev/discus0434/scraps/e0b1a0aa5406eb
-    npm install -g @anthropic-ai/claude-code@1.0.24 @openai/codex@native @google/gemini-cli
+    npm install -g @anthropic-ai/claude-code@1.0.24 @openai/codex@latest @google/gemini-cli
 EOF
 
 RUN <<EOF
