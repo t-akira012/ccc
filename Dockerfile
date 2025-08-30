@@ -14,14 +14,8 @@ RUN <<EOF
     apt-get install -y --no-install-recommends \
         build-essential curl git sudo ca-certificates procps tzdata libsasl2-modules vim software-properties-common \
         pipx python3-all python-is-python3
-    pipx ensurepath
     apt-get clean
     rm -rf /var/lib/apt/lists/*
-EOF
-
-# install uv
-RUN <<EOF
-    pipx install uv
 EOF
 
 # install nodejs
@@ -50,14 +44,20 @@ RUN <<EOF
 
 EOF
 
-
-
 # 開発ユーザーに切り替え
 USER ubuntu
+
+# install uv - uvはubuntu userでインストールすること
+RUN <<EOF
+    set -euo pipefail
+    pipx ensurepath
+    pipx install uv
+EOF
 
 # bashエイリアスとMCP設定を追加
 RUN <<EOF
 # Claude Code設定ディレクトリを作成
+    set -euo pipefail
     mkdir -p /home/ubuntu/.claude
     mkdir -p /home/ubuntu/.codex
     mkdir -p /home/ubuntu/.config/claude
