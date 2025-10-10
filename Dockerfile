@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM public.ecr.aws/ubuntu/ubuntu:latest
 ENV TZ=Asia/Tokyo
 # 作業ディレクトリ設定
 WORKDIR /workspace
@@ -8,6 +8,9 @@ COPY --chown=ubuntu:ubuntu . .
 # CA (for proxy)
 # COPY cert.crt /usr/local/share/ca-certificates
 # ENV GIT_SSL_CAINFO=/etc/ssl/certs/ca-certificates.crt
+
+# TODO
+ENV GIT_SSL_NO_VERIFY=true
 
 RUN <<EOF
     export DEBIAN_FRONTEND=noninteractive
@@ -24,7 +27,8 @@ RUN <<EOF
     update-ca-certificates
 
     # Install AI Agents
-    npm install -g @anthropic-ai/claude-code @openai/codex @google/gemini-cli
+    npm install -g @anthropic-ai/claude-code
+    # npm install -g @openai/codex @google/gemini-cli
 
     # JST（日本標準時）を設定
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
@@ -45,9 +49,9 @@ RUN <<EOF
 
     # AI Agent設定ディレクトリを作成
     mkdir -p /home/ubuntu/.claude
-    mkdir -p /home/ubuntu/.codex
     mkdir -p /home/ubuntu/.config/claude
-    mkdir -p /home/ubuntu/.config/gemini
+    # mkdir -p /home/ubuntu/.codex
+    # mkdir -p /home/ubuntu/.config/gemini
 
     cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
 export PATH="$PATH:/home/ubuntu/.local/bin"
@@ -59,10 +63,9 @@ fi
 BASHRC_EOF
 EOF
 
-# Claude CodeとGemini CLIの動作確認
 RUN claude --version || echo "Claude Code installed, auth required"
-RUN codex --version || echo "Codex CLI installed, auth required"
-RUN gemini --version || echo "Gemini CLI installed, auth required"
+# RUN codex --version || echo "Codex CLI installed, auth required"
+# RUN gemini --version || echo "Gemini CLI installed, auth required"
 
 # デフォルトコマンド（対話型bash）
 CMD ["bash", "-l"]
