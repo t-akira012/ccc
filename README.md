@@ -4,6 +4,12 @@
 
 * Claude Code を `--dangerously-skip-permissions` モードで動かすための、コンテナ
 
+## 使用したいリポジトリの `.claude-code` に配置する
+
+```
+curl -s https://raw.githubusercontent.com/t-akira012/ccc/refs/heads/main/dl.sh | bash
+```
+
 ## 使い方
 
 ```
