@@ -4,8 +4,10 @@ ENV TZ=Asia/Tokyo
 WORKDIR /workspace
 # プロジェクトファイルをコピー
 COPY --chown=ubuntu:ubuntu . .
-# スクリプトに実行権限付与
-# RUN chmod +x *.sh
+
+# CA (for proxy)
+# COPY cert.crt /usr/local/share/ca-certificates
+# ENV GIT_SSL_CAINFO=/etc/ssl/certs/ca-certificates.crt
 
 RUN <<EOF
     export DEBIAN_FRONTEND=noninteractive
@@ -38,13 +40,17 @@ USER ubuntu
 
 # bashエイリアスとMCP設定を追加
 RUN <<EOF
-# Claude Code設定ディレクトリを作成
+    # install uvx
+    pipx install uv
+
+    # AI Agent設定ディレクトリを作成
     mkdir -p /home/ubuntu/.claude
     mkdir -p /home/ubuntu/.codex
     mkdir -p /home/ubuntu/.config/claude
     mkdir -p /home/ubuntu/.config/gemini
 
     cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
+export PATH="$PATH:/home/ubuntu/.local/bin"
 source /workspace/.claude-code/.env
 source /workspace/.claude-code/alias.sh
 if [[ $- != *i* ]]; then

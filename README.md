@@ -7,15 +7,15 @@
 ## 使い方
 
 ```
-# コンテナを起動
-$ make up
+# イメージをビルド
+$ make build-nocache
 
 # コンテナに入る
-$ make dev
+$ make
 
 # Claude Codeを認証
 $ claude auth
 
 # dangerously-skip-permissionsをモードで実行
-$ ./danger.sh
+$ ccd
 ```
