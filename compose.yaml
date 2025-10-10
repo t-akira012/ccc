@@ -9,7 +9,7 @@ services:
     volumes:
       - ./src/:/workspace:rw                             # Workspacce Dir
       - .:/workspace/.claude-code:ro                     # Claude Code Container Dir
-      - ~/.config/.claude:/home/ubuntu/.config/claude/   # Global CLAUDE.md
+      - ~/.config/claude:/home/ubuntu/.config/claude/   # Global CLAUDE.md
       - ~/.config/gh:/root/.config/gh:ro                 # gh-cli config
     working_dir: /workspace
     command: ["bash"]
