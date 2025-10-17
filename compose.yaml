@@ -1,9 +1,9 @@
 services:
   claude-code-container_origin_name:
-    image: ccc-claude-code-container_origin_name:latest # ビルドせずに実行
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    image: origin_ccc:latest # ここでビルドしたイメージを全てに使う
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file:
       - .env
     container_name: claude-code-container_origin_name
