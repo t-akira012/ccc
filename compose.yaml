@@ -1,8 +1,9 @@
 services:
   claude-code-container_origin_name:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ccc-claude-code-container_origin_name:latest # ビルドせずに実行
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     env_file:
       - .env
     container_name: claude-code-container_origin_name
@@ -11,6 +12,7 @@ services:
       - .:/workspace/.claude-code:ro                     # Claude Code Container Dir
       - ~/.config/claude:/home/ubuntu/.config/claude/    # Global CLAUDE.md
       - ~/.config/gh:/root/.config/gh:ro                 # gh-cli config
+      - ~/.codex/:/home/ubuntu/.codex                    # codex cli
     working_dir: /workspace
     command: ["bash"]
     stdin_open: true

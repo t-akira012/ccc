@@ -28,7 +28,7 @@ RUN <<EOF
 
     # Install AI Agents
     npm install -g @anthropic-ai/claude-code
-    # npm install -g @openai/codex @google/gemini-cli
+    npm install -g @openai/codex @google/gemini-cli
 
     # JST（日本標準時）を設定
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime
@@ -50,8 +50,8 @@ RUN <<EOF
     # AI Agent設定ディレクトリを作成
     mkdir -p /home/ubuntu/.claude
     mkdir -p /home/ubuntu/.config/claude
-    # mkdir -p /home/ubuntu/.codex
-    # mkdir -p /home/ubuntu/.config/gemini
+    mkdir -p /home/ubuntu/.codex
+    mkdir -p /home/ubuntu/.config/gemini
 
     cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
 export PATH="$PATH:/home/ubuntu/.local/bin"
@@ -64,8 +64,8 @@ BASHRC_EOF
 EOF
 
 RUN claude --version || echo "Claude Code installed, auth required"
-# RUN codex --version || echo "Codex CLI installed, auth required"
-# RUN gemini --version || echo "Gemini CLI installed, auth required"
+RUN codex --version || echo "Codex CLI installed, auth required"
+RUN gemini --version || echo "Gemini CLI installed, auth required"
 
 # デフォルトコマンド（対話型bash）
 CMD ["bash", "-l"]
