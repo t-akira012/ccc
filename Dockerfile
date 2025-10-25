@@ -56,7 +56,7 @@ RUN <<EOF
     cat >> /home/ubuntu/.bashrc << 'BASHRC_EOF'
 export PATH="$PATH:/home/ubuntu/.local/bin"
 source /workspace/.claude-code/.env
-source /workspace/.claude-code/alias.sh
+source /workspace/.claude-code/bashrc-ex.sh
 if [[ $- != *i* ]]; then
     source /workspace/.claude-code/mcp.sh
 fi

@@ -36,7 +36,7 @@
 curl -s https://raw.githubusercontent.com/t-akira012/ccc/refs/heads/main/dl.sh | bash
 ```
 
-## 使い方
+## 実行手順
 
 ```
 # イメージをビルド
@@ -48,3 +48,15 @@ $ make
 # dangerously-skip-permissionsをモードで実行 (claude --dangerously-skip-permissions のalias)
 $ ccd
 ```
+
+### 細かい使い方
+
+#### MCPを自動でインストールしたい
+
+* `mcp.sh` に `claude mcp` コマンドを列挙してください。Claude Codeの実行時に自動でロードされます。
+* デフォルトでは、Serena MCPと AWS ドキュメントMCPサーバーを導入しています。
+
+#### コンテナの `.bashrc` に追記をしたい
+
+* aliasやexportをしたいときに`.bashrc` に追記をしたいことがあると思います。
+* `bashrc-ex.sh` が自動で `.bashrc` からsourceされます。こちらに追記をしてください。
