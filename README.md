@@ -70,3 +70,11 @@ $ ccd
 
 * Gemini CLIと、Codex CLIも同梱しています。
 * いずれもホストマシンのConfigディレクトリをコンテナにbindしているので、ローカルの設定を使えます。
+
+### その他
+
+#### VPN用に用意した社内信頼CA証明書が使えない
+
+* VPNなどの環境で動かすためにコンテナ内部に `/etc/ssl/certs/ca-certificates.crt` を社内信頼証明書に追加したが、curlやgitなどがエラーになる
+* Cloudflare ZeroTrust環境で発生
+* 仕方ないので `GIT_SSL_NO_VERIFY=true` にしている
