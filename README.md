@@ -51,6 +51,10 @@ $ ccd
 
 ### 細かい使い方
 
+#### ホストマシンのCLAUDE.mdを読みたい
+
+* ホストマシンの `~/.config/claude/` はコンテナにbindされますので、自動でロードされます。
+
 #### MCPを自動でインストールしたい
 
 * `mcp.sh` に `claude mcp` コマンドを列挙してください。Claude Codeの実行時に自動でロードされます。
@@ -60,3 +64,9 @@ $ ccd
 
 * aliasやexportをしたいときに`.bashrc` に追記をしたいことがあると思います。
 * `bashrc-ex.sh` が自動で `.bashrc` からsourceされます。こちらに追記をしてください。
+
+
+### おまけ
+
+* Gemini CLIと、Codex CLIも同梱しています。
+* いずれもホストマシンのConfigディレクトリをコンテナにbindしているので、ローカルの設定を使えます。
