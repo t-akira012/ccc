@@ -11,7 +11,8 @@ build:
 	docker compose build
 
 build-nocache:
-	docker compose build --no-cache
+	DOCKER_BUILDKIT=1 docker compose build --no-cache
+	
 
 logs:
 	docker compose logs -f
