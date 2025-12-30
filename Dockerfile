@@ -118,10 +118,7 @@ RUN <<EOF
         vim \
         tree \
         shellcheck \
-        shfmt
-    
-    # 言語
-    brew install
+        shfmt \
         go \
         deno
     # ------ キャッシュ削除 ------
