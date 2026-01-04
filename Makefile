@@ -8,12 +8,11 @@ down:
 	docker-compose down
 
 build:
-	docker-compose build
+	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose build
 
 build-nocache:
-	DOCKER_BUILDKIT=1 docker-compose build --no-cache
+	DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose build --no-cache
 	
-
 logs:
 	docker-compose logs -f
 
