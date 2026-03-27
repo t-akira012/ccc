@@ -1,0 +1,21 @@
+#!/bin/bash
+set -eu
+
+run_container(){
+  if [[ -n $CLAUDE_CODE_USE_BEDROCK ]];then
+    local CREDS=$(aws configure export-credentials --profile ${AWS_PROFILE} --format process)
+    docker-compose exec \
+      -e AWS_ACCESS_KEY_ID=$(echo ${CREDS} | jq -r .AccessKeyId) \
+      -e AWS_SECRET_ACCESS_KEY=$(echo ${CREDS} | jq -r .SecretAccessKey) \
+      -e AWS_SESSION_TOKEN=$(echo ${CREDS} | jq -r .SessionToken) \
+      -e AWS_REGION=ap-northeast-1 \
+      -e CLAUDE_CODE_USE_BEDROCK \
+      -e ANTHROPIC_MODEL \
+      ${CONTAINER_NAME} bash
+  else
+    docker-compose exec \
+      ${CONTAINER_NAME} bash
+  fi
+}
+
+run_container

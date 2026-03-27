@@ -21,7 +21,7 @@ restart:
 
 # 開発環境アクセス
 dev:
-	docker-compose exec claude-code-container_origin_name bash
+	export CONTAINER_NAME=claude-code-container_origin_name; ./run
 
 deploy:
 	export CURRENT_DIR=$$(pwd) && echo $$CURRENT_DIR && echo create-reverce-symlink && mv $$CURRENT_DIR $$HOME/ccc/.ccc && ln -si $$HOME/ccc/.ccc $${CURRENT_DIR}
