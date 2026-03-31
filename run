@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -e
 
 run_container(){
   if [[ -n $CLAUDE_CODE_USE_BEDROCK ]];then
