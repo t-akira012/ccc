@@ -12,38 +12,40 @@
 
 ## 使い方
 
-* このコンテナは、対象リポジトリの `git-root/.claude-code` に配置する想定です。
+* このコンテナは、ホストマシンの `$HOME/.claude-code` に配置する想定です。
 * リポジトリのファイルはコンテナ内部の `/workspace` に配置されます。
 
 ### ディレクトリ構成
 
 ```
 .
-├── .claude-code/           # Claude Codeのコンテナ関連ファイル
-│   ├── .env
-│   ├── Dockerfile
-│   :
-│
 ├── README.md     # リポジトリの中身 ( コンテナ内で /workspace に bind される)
 :
 ```
 
-## 使用したいリポジトリの `.claude-code` に配置する
+## ホストマシンの `$HOME/.local/.claude-code` に配置する
 
 * `curl | bash` でdownload ~ 配置できるようにしています。
 
 ```
+cd $HOME/.local/
 curl -s https://raw.githubusercontent.com/t-akira012/ccc/refs/heads/main/dl.sh | bash
+```
+
+ホストマシンの `.bashrc` などで `host.sh` を読み込みます。
+
+```
+source "$HOME/.local/.claude-code/host.sh"
 ```
 
 ## 実行手順
 
 ```
 # イメージをビルド
-$ make build-nocache
+$ ccc build-nocache
 
 # コンテナに入る
-$ make
+$ ccc
 
 # dangerously-skip-permissionsをモードで実行 (claude --dangerously-skip-permissions のalias)
 $ ccd

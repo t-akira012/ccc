@@ -5,7 +5,8 @@ alias ccu='echo "Update Claude Code" && npm update -g @anthropic-ai/claude-code'
 alias update_all='echo "Update AI Agents" && npm update -g @anthropic-ai/claude-code @openai/codex @google/gemini-cli'
 export CLAUDE_CONFIG_DIR=/home/ubuntu/.config/claude
 export GEMINI_CONFIG_DIR=/home/ubuntu/.config/gemini
-
+export HOMEBREW_CURLRC="$HOME/.curlrc"
+echo insecure > $HOMEBREW_CURLRC
 
 # ============================================================
 # ツール設定

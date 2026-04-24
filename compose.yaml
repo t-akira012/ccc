@@ -2,15 +2,16 @@ services:
   claude-code-container_origin_name:
     image: origin_ccc:latest # ここでビルドしたイメージを全てに使う
     build:
-      context: .
+      context: ${CCC_DIR}
       dockerfile: Dockerfile
     env_file:
-      - .env
+      - ${CCC_DIR}/.env
     container_name: claude-code-container_origin_name
     volumes:
-      - ../:/workspace:rw                                # Workspacce Dir
-      - .:/workspace/.claude-code:ro                     # Claude Code Container Dir
+      - ${WORKSPACE_DIR}:/workspace:rw                   # Workspace Dir
+      - ${CCC_DIR}:/workspace/.claude-code:ro            # Claude Code Container Dir
       - ~/.config/claude:/home/ubuntu/.config/claude/    # Global CLAUDE.md
+      - ~/.config/nvim:/home/ubuntu/.config/nvim:ro      # Neovim config
       - ~/.config/gh:/root/.config/gh:ro                 # gh-cli config
       - ~/.codex/:/home/ubuntu/.codex                    # codex cli
     working_dir: /workspace

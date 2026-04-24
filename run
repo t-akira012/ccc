@@ -2,9 +2,26 @@
 set -e
 
 run_container(){
-  if [[ -n $CLAUDE_CODE_USE_BEDROCK ]];then
+  mode="$1"
+
+  if [[ -z "$COMPOSE_ARGS" ]]; then
+    echo "COMPOSE_ARGS is required. Run this through host.sh/Makefile." >&2
+    exit 1
+  fi
+
+  if [[ -z "$CONTAINER_NAME" ]]; then
+    echo "CONTAINER_NAME is required. Run this through host.sh/Makefile." >&2
+    exit 1
+  fi
+
+  case "$mode" in
+  normal)
+    docker-compose ${COMPOSE_ARGS} exec \
+      ${CONTAINER_NAME} bash
+    ;;
+  bedrock)
     local CREDS=$(aws configure export-credentials --profile ${AWS_PROFILE} --format process)
-    docker-compose exec \
+    docker-compose ${COMPOSE_ARGS} exec \
       -e AWS_ACCESS_KEY_ID=$(echo ${CREDS} | jq -r .AccessKeyId) \
       -e AWS_SECRET_ACCESS_KEY=$(echo ${CREDS} | jq -r .SecretAccessKey) \
       -e AWS_SESSION_TOKEN=$(echo ${CREDS} | jq -r .SessionToken) \
@@ -12,10 +29,12 @@ run_container(){
       -e CLAUDE_CODE_USE_BEDROCK \
       -e ANTHROPIC_MODEL \
       ${CONTAINER_NAME} bash
-  else
-    docker-compose exec \
-      ${CONTAINER_NAME} bash
-  fi
+    ;;
+  *)
+    echo "Usage: run normal|bedrock" >&2
+    exit 1
+    ;;
+  esac
 }
 
-run_container
+run_container "$1"
