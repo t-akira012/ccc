@@ -27,3 +27,5 @@ alias cat='bat --paging=never --style=plain'
 
 # delta: git diff を見やすく（git config で設定するのが本来だが、alias でも可）
 alias diff='delta'
+
+export PS1="\[\e[1;33m\]$(basename $WORKSPACE_DIR)\[\e[m\]:\[\033[32m\]\w\033[00m\] $ "

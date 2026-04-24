@@ -17,4 +17,5 @@ services:
     tty: true
     environment:
       - TERM=xterm-256color
+      - WORKSPACE_DIR=${WORKSPACE_DIR}
     init: true
