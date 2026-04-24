@@ -8,6 +8,8 @@ export CLAUDE_CONFIG_DIR=/home/ubuntu/.config/claude
 export GEMINI_CONFIG_DIR=/home/ubuntu/.config/gemini
 export HOMEBREW_CURLRC="$HOME/.curlrc"
 echo insecure > $HOMEBREW_CURLRC
+alias vim=nvim
+alias vi=nvim
 
 # ============================================================
 # ツール設定
