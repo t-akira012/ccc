@@ -1,4 +1,4 @@
-CCC_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+CCC_DIR := $(HOME)/.local/.claude-code
 WORKSPACE_DIR := $(CURDIR)
 COMPOSE := WORKSPACE_DIR=$(abspath $(WORKSPACE_DIR)) CCC_DIR=$(CCC_DIR) docker-compose -f $(CCC_DIR)/compose.yaml --project-directory $(CCC_DIR)
 
