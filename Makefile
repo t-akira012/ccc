@@ -31,10 +31,15 @@ clean:
 
 # 開発環境アクセス
 dev:
+	echo "==========================================================="
+	echo "Claude Code コンテナに入ります"
+	echo "対象: $WORKSPACE_DIR"
+	echo "==========================================================="
 	export CONTAINER_NAME=claude-code-container_origin_name; export COMPOSE_ARGS="-f $(CCC_DIR)/compose.yaml --project-directory $(CCC_DIR)"; $(CCC_DIR)/run normal
 
 bedrock: up
+	echo "==========================================================="
+	echo "Claude Code コンテナに入ります"
+	echo "対象: $WORKSPACE_DIR"
+	echo "==========================================================="
 	export CONTAINER_NAME=claude-code-container_origin_name; export COMPOSE_ARGS="-f $(CCC_DIR)/compose.yaml --project-directory $(CCC_DIR)"; $(CCC_DIR)/run bedrock
-
-deploy:
-	export CURRENT_DIR=$$(pwd) && echo $$CURRENT_DIR && echo create-reverce-symlink && mv $$CURRENT_DIR $$HOME/ccc/.ccc && ln -si $$HOME/ccc/.ccc $${CURRENT_DIR}
