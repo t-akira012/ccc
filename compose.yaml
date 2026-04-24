@@ -4,8 +4,6 @@ services:
     build:
       context: ${CCC_DIR}
       dockerfile: Dockerfile
-    env_file:
-      - ${CCC_DIR}/.env
     container_name: claude-code-container_origin_name
     volumes:
       - ${WORKSPACE_DIR}:/workspace:rw                   # Workspace Dir

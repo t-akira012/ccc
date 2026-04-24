@@ -239,7 +239,6 @@ export PATH="${ASDF_DATA_DIR}/shims:${ASDF_DATA_DIR}/bin:$PATH"
 export PATH="$PATH:/home/ubuntu/.local/bin"
 
 # .claude-code
-source /workspace/.claude-code/.env
 source /workspace/.claude-code/bashrc-ex.sh
 
 source /workspace/.claude-code/mcp.sh
