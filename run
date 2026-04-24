@@ -9,15 +9,15 @@ run_container(){
     exit 1
   fi
 
-  if [[ -z "$CONTAINER_NAME" ]]; then
-    echo "CONTAINER_NAME is required. Run this through host.sh/Makefile." >&2
+  if [[ -z "$SERVICE_NAME" ]]; then
+    echo "SERVICE_NAME is required. Run this through host.sh/Makefile." >&2
     exit 1
   fi
 
   case "$mode" in
   normal)
     docker-compose ${COMPOSE_ARGS} exec \
-      ${CONTAINER_NAME} bash
+      ${SERVICE_NAME} bash
     ;;
   bedrock)
     local CREDS=$(aws configure export-credentials --profile ${AWS_PROFILE} --format process)
@@ -28,7 +28,7 @@ run_container(){
       -e AWS_REGION=ap-northeast-1 \
       -e CLAUDE_CODE_USE_BEDROCK \
       -e ANTHROPIC_MODEL \
-      ${CONTAINER_NAME} bash
+      ${SERVICE_NAME} bash
     ;;
   *)
     echo "Usage: run normal|bedrock" >&2

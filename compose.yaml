@@ -4,7 +4,6 @@ services:
     build:
       context: ${CCC_DIR}
       dockerfile: Dockerfile
-    container_name: claude-code-container_origin_name
     volumes:
       - ${WORKSPACE_DIR}:/workspace:rw                   # Workspace Dir
       - ${CCC_DIR}:/home/ubuntu/.claude-code:ro            # Claude Code Container Dir
