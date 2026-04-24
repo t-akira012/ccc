@@ -48,16 +48,4 @@ dev:
 	CCC_DIR=$(CCC_DIR) \
 	SERVICE_NAME=$(SERVICE_NAME) \
 	COMPOSE_ARGS="$(COMPOSE_ARGS)" \
-	$(CCC_DIR)/run normal
-
-bedrock: up
-	@echo "==========================================================="
-	@echo "Claude Code コンテナに入ります"
-	@echo "対象: $(WORKSPACE_DIR)"
-	@echo "PROJECT: $(PROJECT)"
-	@echo "==========================================================="
-	WORKSPACE_DIR=$(WORKSPACE_DIR) \
-	CCC_DIR=$(CCC_DIR) \
-	SERVICE_NAME=$(SERVICE_NAME) \
-	COMPOSE_ARGS="$(COMPOSE_ARGS)" \
-	$(CCC_DIR)/run bedrock
+	$(CCC_DIR)/run

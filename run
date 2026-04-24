@@ -2,7 +2,11 @@
 set -e
 
 run_container(){
-  mode="$1"
+  if [[ $CLAUDE_CODE_USE_BEDROCK == 0 ]];then
+    mode=normal
+  else
+    mode=bedrock
+  fi
 
   if [[ -z "$COMPOSE_ARGS" ]]; then
     echo "COMPOSE_ARGS is required. Run this through host.sh/Makefile." >&2
