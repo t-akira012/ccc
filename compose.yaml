@@ -7,7 +7,7 @@ services:
     container_name: claude-code-container_origin_name
     volumes:
       - ${WORKSPACE_DIR}:/workspace:rw                   # Workspace Dir
-      - ${CCC_DIR}:/workspace/.claude-code:ro            # Claude Code Container Dir
+      - ${CCC_DIR}:/home/ubuntu/.claude-code:ro            # Claude Code Container Dir
       - ~/.config/claude:/home/ubuntu/.config/claude/    # Global CLAUDE.md
       - ~/.config/nvim:/home/ubuntu/.config/nvim:ro      # Neovim config
       - ~/.config/gh:/root/.config/gh:ro                 # gh-cli config

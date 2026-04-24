@@ -233,15 +233,15 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 # asdf
 export ASDF_DATA_DIR="$HOME/.asdf"
 export PATH="${ASDF_DATA_DIR}/shims:${ASDF_DATA_DIR}/bin:$PATH"
-. "${ASDF_DATA_DIR}/plugins/golang/set-env.bash"
+source "${ASDF_DATA_DIR}/plugins/golang/set-env.bash"
 
 # PATH
 export PATH="$PATH:/home/ubuntu/.local/bin"
 
 # .claude-code
-source /workspace/.claude-code/bashrc-ex.sh
+source $HOME/.claude-code/bashrc-ex.sh
 
-source /workspace/.claude-code/mcp.sh
+source $HOME/.claude-code/mcp.sh
 BASHRC_EOF
 EOF
 
