@@ -8,6 +8,7 @@ services:
       - ${WORKSPACE_DIR}:/workspace:rw                   # Workspace Dir
       - ${CCC_DIR}:/home/ubuntu/.claude-code:ro            # Claude Code Container Dir
       - ~/.config/claude:/home/ubuntu/.config/claude/    # Global CLAUDE.md
+      - ${CCC_DIR}/empty-credentials.json:/home/ubuntu/.config/claude/.credentials.json:ro  # 回転OAuthを隠し長期トークンを使わせる
       - ~/.config/nvim:/home/ubuntu/.config/nvim:ro      # Neovim config
       - ~/.config/gh:/root/.config/gh:ro                 # gh-cli config
       - ~/.codex/:/home/ubuntu/.codex                    # codex cli
@@ -18,4 +19,5 @@ services:
     environment:
       - TERM=xterm-256color
       - WORKSPACE_DIR=${WORKSPACE_DIR}
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN:-}   # host.sh が保管トークンを注入 (bind mountしない)
     init: true

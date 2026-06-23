@@ -36,7 +36,11 @@ restart:
 	$(COMPOSE) restart
 
 clean:
-	$(CCC_DIR)/clean.sh
+	$(CCC_DIR)/clean_container.sh
+
+prune:
+	$(CCC_DIR)/clean_container.sh
+	$(CCC_DIR)/clean_image.sh
 
 dev:
 	@echo "==========================================================="
