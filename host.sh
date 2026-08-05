@@ -10,7 +10,7 @@ ccc_token_file="${HOME}/.local/ccc/ccc-oauth-token"
 # bind mount せず値だけを渡すことで、隔離コンテナにファイル自体を晒さない。
 # bedrock モードは AWS 認証で動き OAuth を要さないため注入しない。
 ccc_export_oauth_token(){
-  if [[ -v CLAUDE_CODE_USE_BEDROCK ]] && [ "${CLAUDE_CODE_USE_BEDROCK}" != 0 ]; then
+  if [ "${CLAUDE_CODE_USE_BEDROCK:-0}" != 0 ]; then
     return 0
   fi
   if [ -f "${ccc_token_file}" ]; then

@@ -7,8 +7,8 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${script_dir}/../host.sh"
 
 reset_env(){
-  if [[ -v CLAUDE_CODE_OAUTH_TOKEN ]]; then unset CLAUDE_CODE_OAUTH_TOKEN; fi
-  if [[ -v CLAUDE_CODE_USE_BEDROCK ]]; then unset CLAUDE_CODE_USE_BEDROCK; fi
+  unset CLAUDE_CODE_OAUTH_TOKEN
+  unset CLAUDE_CODE_USE_BEDROCK
 }
 
 test_exports_token_when_present(){
@@ -36,7 +36,7 @@ test_skips_when_absent(){
 
   ccc_export_oauth_token
 
-  if [[ -v CLAUDE_CODE_OAUTH_TOKEN ]]; then
+  if [ "${CLAUDE_CODE_OAUTH_TOKEN+x}" = x ]; then
     echo "FAIL: must not export when file absent" >&2
     return 1
   fi
@@ -54,7 +54,7 @@ test_skips_in_bedrock(){
 
   ccc_export_oauth_token
 
-  if [[ -v CLAUDE_CODE_OAUTH_TOKEN ]]; then
+  if [ "${CLAUDE_CODE_OAUTH_TOKEN+x}" = x ]; then
     echo "FAIL: must not export in bedrock" >&2
     return 1
   fi

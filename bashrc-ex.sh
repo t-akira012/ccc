@@ -1,13 +1,14 @@
 alias ccc='claude'
 alias cca='claude auth'
 alias ccd='claude --dangerously-skip-permissions'
-alias ccu='echo "Update Claude Code" && npm update -g @anthropic-ai/claude-code'
+alias ccu='echo "Update Claude Code" && claude update'
 alias codexd='codex --dangerously-bypass-approvals-and-sandbox'
-alias update_all='echo "Update AI Agents" && npm update -g @anthropic-ai/claude-code @openai/codex @google/gemini-cli'
+alias hermesd='hermes'
+alias update_all='echo "Update AI Agents" && claude update && hermes update && npm install -g @google/gemini-cli@latest && curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 CODEX_HOME=$HOME/.local/share/codex-install CODEX_INSTALL_DIR=$HOME/.local/bin sh'
 export CLAUDE_CONFIG_DIR=/home/ubuntu/.config/claude
 export GEMINI_CONFIG_DIR=/home/ubuntu/.config/gemini
 export HOMEBREW_CURLRC="$HOME/.curlrc"
-echo insecure > $HOMEBREW_CURLRC
+echo insecure > "$HOMEBREW_CURLRC"
 alias vim=nvim
 alias vi=nvim
 
@@ -28,4 +29,5 @@ alias cat='bat --paging=never --style=plain'
 # delta: git diff を見やすく（git config で設定するのが本来だが、alias でも可）
 alias diff='delta'
 
-export PS1="\[\e[1;33m\]$(basename $WORKSPACE_DIR)\[\e[m\]:\[\033[32m\]\w\033[00m\] $ "
+PS1="\[\e[1;33m\]$(basename "$WORKSPACE_DIR")\[\e[m\]:\[\033[32m\]\w\033[00m\] $ "
+export PS1

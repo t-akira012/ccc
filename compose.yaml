@@ -12,6 +12,7 @@ services:
       - ~/.config/nvim:/home/ubuntu/.config/nvim:ro      # Neovim config
       - ~/.config/gh:/root/.config/gh:ro                 # gh-cli config
       - ~/.codex/:/home/ubuntu/.codex                    # codex cli
+      - ~/.hermes/:/home/ubuntu/.hermes                  # Hermes Agent config/state
     working_dir: /workspace
     command: ["bash"]
     stdin_open: true

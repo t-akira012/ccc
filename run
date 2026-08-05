@@ -2,10 +2,10 @@
 set -e
 
 run_container(){
-  if [[ $CLAUDE_CODE_USE_BEDROCK == 0 ]];then
-    mode=normal
-  else
+  if [ "${CLAUDE_CODE_USE_BEDROCK:-0}" != 0 ]; then
     mode=bedrock
+  else
+    mode=normal
   fi
 
   if [[ -z "$COMPOSE_ARGS" ]]; then
@@ -24,11 +24,12 @@ run_container(){
       ${SERVICE_NAME} bash
     ;;
   bedrock)
-    local CREDS=$(aws configure export-credentials --profile ${AWS_PROFILE} --format process)
+    local CREDS
+    CREDS="$(aws configure export-credentials --profile "${AWS_PROFILE}" --format process)"
     docker-compose ${COMPOSE_ARGS} exec \
-      -e AWS_ACCESS_KEY_ID=$(echo ${CREDS} | jq -r .AccessKeyId) \
-      -e AWS_SECRET_ACCESS_KEY=$(echo ${CREDS} | jq -r .SecretAccessKey) \
-      -e AWS_SESSION_TOKEN=$(echo ${CREDS} | jq -r .SessionToken) \
+      -e AWS_ACCESS_KEY_ID="$(jq -r .AccessKeyId <<<"${CREDS}")" \
+      -e AWS_SECRET_ACCESS_KEY="$(jq -r .SecretAccessKey <<<"${CREDS}")" \
+      -e AWS_SESSION_TOKEN="$(jq -r .SessionToken <<<"${CREDS}")" \
       -e AWS_REGION=ap-northeast-1 \
       -e CLAUDE_CODE_USE_BEDROCK \
       -e ANTHROPIC_MODEL \

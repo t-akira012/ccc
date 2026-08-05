@@ -14,7 +14,6 @@ ENV HOMEBREW_NO_ANALYTICS=1
 ENV HOMEBREW_NO_INSTALL_CLEANUP=0
 
 WORKDIR /workspace
-COPY --chown=ubuntu:ubuntu . .
 
 # TODO: VPN/プロキシ環境での証明書問題の回避策
 # 本来は正しく証明書を設定すべき
@@ -31,30 +30,23 @@ RUN <<EOF
     apt-get update
     apt-get install -y --no-install-recommends \
         build-essential \
-        autoconf \
-        bison \
         curl \
         file \
         git \
         gnupg \
-        dirmngr \
-        gawk \
         procps \
+        lsof \
+        python3 \
+        python3-venv \
+        sqlite3 \
+        strace \
         locales \
         tzdata \
         sudo \
         ca-certificates \
         tar \
         unzip \
-        xz-utils \
-        libssl-dev \
-        zlib1g-dev \
-        libreadline-dev \
-        libsqlite3-dev \
-        libbz2-dev \
-        libffi-dev \
-        liblzma-dev \
-        libyaml-dev
+        xz-utils
     
     # ロケール生成（Homebrew が必要とする）
     locale-gen en_US.UTF-8
@@ -108,6 +100,9 @@ ENV HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew"
 RUN <<EOF
     set -e
 
+    # HashiCorp公式tapからTerraformを導入
+    brew tap hashicorp/tap
+
     # ------ 開発支援ツール ------
     # これらが最初から使えることで、destroy しても快適に作業再開できる
     
@@ -127,68 +122,65 @@ RUN <<EOF
         tree \
         shellcheck \
         shfmt \
-        uv
+        pandoc \
+        mise \
+        age \
+        sops \
+        terraform-docs \
+        uv \
+        hashicorp/tap/terraform
     # ------ キャッシュ削除 ------
     # イメージサイズ削減（それでも大きいが、ローカル環境では許容）
     brew cleanup --prune=all
     rm -rf "$(brew --cache)"
 EOF
 
-ENV GOPATH="/home/ubuntu/go"
+# TFLintは公式GitHub Releaseの事前ビルド済みバイナリを導入する。
+# 公式install_linux.shは2026-09-01廃止予定のため使用しない。
+ARG TFLINT_VERSION=v0.63.0
+RUN <<EOF
+    set -e
+    case "$(uname -m)" in
+        x86_64) tflint_arch=amd64 ;;
+        aarch64|arm64) tflint_arch=arm64 ;;
+        *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+    esac
+    curl -fsSL \
+        "https://github.com/terraform-linters/tflint/releases/download/${TFLINT_VERSION}/tflint_linux_${tflint_arch}.zip" \
+        -o /tmp/tflint.zip
+    unzip -q /tmp/tflint.zip -d /tmp/tflint
+    sudo install -m 0755 /tmp/tflint/tflint /usr/local/bin/tflint
+    rm -rf /tmp/tflint /tmp/tflint.zip
+EOF
 
 # ============================================================
-# asdf による言語ランタイムのインストール
+# mise による言語ランタイムのインストール
 # ============================================================
-ENV ASDF_DIR="/home/ubuntu/.asdf"
-ENV ASDF_DATA_DIR="/home/ubuntu/.asdf"
-ENV PATH="${ASDF_DIR}/shims:${ASDF_DIR}/bin:/home/ubuntu/.local/bin:${PATH}"
+# major/minor系列を固定し、事前ビルド済み配布物をビルド時に取得する。
+# Docker layerが有効な限り再取得せず、明示的な再ビルドで系列内を更新する。
+ENV MISE_DATA_DIR="/home/ubuntu/.local/share/mise"
+ENV MISE_CONFIG_DIR="/home/ubuntu/.config/mise"
+ENV MISE_CACHE_DIR="/home/ubuntu/.cache/mise"
+ENV PATH="${MISE_DATA_DIR}/shims:/home/ubuntu/.local/bin:${PATH}"
+ENV GOPATH="/home/ubuntu/go"
+ARG NODE_VERSION=24
+ARG GO_VERSION=1.26
+ARG DENO_VERSION=2
+ARG BUN_VERSION=1
 
 RUN <<EOF
     set -e
 
-    mkdir -p "$ASDF_DIR/bin"
-    asdf_version="$(curl -fsSL https://api.github.com/repos/asdf-vm/asdf/releases/latest | jq -r .tag_name)"
-    case "$(uname -m)" in
-        x86_64) asdf_arch=amd64 ;;
-        aarch64|arm64) asdf_arch=arm64 ;;
-        *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
-    esac
-    curl -fsSL \
-        "https://github.com/asdf-vm/asdf/releases/download/${asdf_version}/asdf-${asdf_version}-linux-${asdf_arch}.tar.gz" \
-        -o /tmp/asdf.tar.gz
-    tar -xzf /tmp/asdf.tar.gz -C "$ASDF_DIR/bin"
-    rm -f /tmp/asdf.tar.gz
-    asdf --version
+    mkdir -p "$MISE_DATA_DIR" "$MISE_CONFIG_DIR" "$MISE_CACHE_DIR"
+    mise use --global \
+        "node@${NODE_VERSION}" \
+        "go@${GO_VERSION}" \
+        "deno@${DENO_VERSION}" \
+        "bun@${BUN_VERSION}"
+    mise reshim
 
-    asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-    asdf plugin add deno https://github.com/asdf-community/asdf-deno.git
-    asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
-    asdf plugin add python https://github.com/danhper/asdf-python.git
-    asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-
-    nodejs_version="$(asdf latest nodejs)"
-    deno_version="$(asdf latest deno)"
-    golang_version="$(asdf latest golang)"
-    python_version="$(asdf latest python)"
-    ruby_version="$(asdf latest ruby)"
-
-    asdf install nodejs "$nodejs_version"
-    asdf install deno "$deno_version"
-    asdf install golang "$golang_version"
-    asdf install python "$python_version"
-    asdf install ruby "$ruby_version"
-
-    asdf set -u nodejs "$nodejs_version"
-    asdf set -u deno "$deno_version"
-    asdf set -u golang "$golang_version"
-    asdf set -u python "$python_version"
-    asdf set -u ruby "$ruby_version"
-
-    asdf reshim
-
-    npm install -g npm@latest
-    npm install -g pnpm
-    asdf reshim nodejs
+    npm install -g pnpm@latest
+    mise reshim
 EOF
 
 # ============================================================
@@ -196,15 +188,37 @@ EOF
 # ============================================================
 RUN <<EOF
     set -e
-    
-    npm install -g @anthropic-ai/claude-code
-    npm install -g @openai/codex
+
+    # Claude Code: Anthropic推奨のnative installer
+    curl -fsSL https://claude.ai/install.sh | bash
+
+    # Codex CLI: OpenAI公式のstandalone installer。
+    # 実行時にbind mountされる ~/.codex とパッケージ本体を分離する。
+    mkdir -p /home/ubuntu/.local/share/codex-install
+    curl -fsSL https://chatgpt.com/codex/install.sh \
+        | CODEX_NON_INTERACTIVE=1 \
+          CODEX_HOME=/home/ubuntu/.local/share/codex-install \
+          CODEX_INSTALL_DIR=/home/ubuntu/.local/bin \
+          sh
+
+    # Hermes Agent: 公式installerを非対話で実行し、初期設定は利用時に行う。
+    # コード本体は永続化対象の ~/.hermes の外に置く。
+    curl -fsSL https://hermes-agent.nousresearch.com/install.sh \
+        | bash -s -- \
+          --non-interactive \
+          --skip-setup \
+          --skip-browser \
+          --dir /home/ubuntu/.local/share/hermes-agent
+
     npm install -g @google/gemini-cli
+    npm cache clean --force
+    rm -rf "$MISE_CACHE_DIR"
     
     # 設定ディレクトリの作成
     mkdir -p /home/ubuntu/.claude
     mkdir -p /home/ubuntu/.config/claude
     mkdir -p /home/ubuntu/.codex
+    mkdir -p /home/ubuntu/.hermes
     mkdir -p /home/ubuntu/.config/gemini
     mkdir -p /home/ubuntu/.config/nvim
 EOF
@@ -230,10 +244,8 @@ RUN <<EOF
 # homebrew
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# asdf
-export ASDF_DATA_DIR="$HOME/.asdf"
-export PATH="${ASDF_DATA_DIR}/shims:${ASDF_DATA_DIR}/bin:$PATH"
-source "${ASDF_DATA_DIR}/plugins/golang/set-env.bash"
+# mise
+eval "$(mise activate bash)"
 
 # PATH
 export PATH="$PATH:/home/ubuntu/.local/bin"
@@ -256,17 +268,22 @@ RUN <<EOF
     echo "npm: $(npm --version)"
     echo "pnpm: $(pnpm --version)"
     echo "Deno: $(deno --version | head -1)"
+    echo "Bun: $(bun --version)"
     echo "Go: $(go version)"
     echo "Python: $(python3 --version)"
-    echo "Ruby: $(ruby --version)"
     echo "uv: $(uv --version)"
-    echo "asdf: $(asdf --version)"
+    echo "mise: $(mise --version)"
     echo "Neovim: $(nvim --version | head -1)"
+    echo "Pandoc: $(pandoc --version | head -1)"
     echo "Homebrew: $(brew --version | head -1)"
+    echo "TFLint: $(tflint --version | head -1)"
+    echo "terraform-docs: $(terraform-docs --version)"
     echo "----------------------------------------"
     claude --version
     codex --version
     gemini --version
+    hermes --version
+    terraform version
     echo "========================================"
 EOF
 

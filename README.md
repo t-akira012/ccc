@@ -1,5 +1,7 @@
 # CCC: `claude --dangerously-skip-permissions` in Container
 
+設計とツール選定方針は [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) を参照してください。
+
 ## これは何か
 
 * Claude Code を安全に `--dangerously-skip-permissions` モードで動かすための、コンテナ
@@ -82,10 +84,17 @@ bedrock モードは AWS 認証で動くため、このトークン処理は実�
 * `bashrc-ex.sh` が自動で `.bashrc` からsourceされます。こちらに追記をしてください。
 
 
-### おまけ
+### 同梱しているAIエージェント
 
-* Gemini CLIと、Codex CLIも同梱しています。
-* いずれもホストマシンのConfigディレクトリをコンテナにbindしているので、ローカルの設定を使えます。
+* Claude CodeはAnthropic公式のnative installer、Codex CLIはOpenAI公式のstandalone installerで導入します。
+* Gemini CLIに加えてHermes Agentも同梱しています。
+* Codexの設定はホストの `~/.codex`、Hermesの設定と状態は `~/.hermes` をコンテナにbindして引き継ぎます。
+* Hermesを初めて使うときは、コンテナ内で `hermes setup --portal` または `hermes setup` を実行してください。
+* TerraformもHashiCorp公式Homebrew tapから導入しています。
+* 軽量な文書変換・解析用CLIとしてPandocも利用できます。
+* 言語環境はasdfではなくmiseでビルド時に構築し、Node.js、Go、Deno、Bunを起動直後から利用できます。PythonはUbuntu標準版とuvを利用します。
+* 軽量な調査・IaC補助ツールとしてSQLite、strace、lsof、age、SOPS、TFLint、terraform-docsを同梱します。
+* イメージ肥大化を避けるため、Hermesのブラウザ依存、Ruby、Rust、Java、Kubernetes、Office・画像処理ツールは標準搭載しません。
 
 ### その他
 
